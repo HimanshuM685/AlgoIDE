@@ -19,26 +19,66 @@ type TreeNode = {
 };
 
 const PYTHON_CONTRACT_PATH = "smart_contracts/hello_world/contract.py";
-const TYPESCRIPT_CONTRACT_PATH = "smart_contracts/hello_world/contract.algo.ts";
+const TYPESCRIPT_CONTRACT_PATH = "contracts/hello_world.algo.ts";
+
+const STORAGE_KEYS: Record<Stack, { files: string; openFile: string }> = {
+  python: {
+    files: "algoide-cache-python-files",
+    openFile: "algoide-cache-python-open-file",
+  },
+  typescript: {
+    files: "algoide-cache-typescript-files",
+    openFile: "algoide-cache-typescript-open-file",
+  },
+};
+
+function getDefaultExpandedFolders(stack: Stack): string[] {
+  if (stack === "python") {
+    return [
+      ".algokit",
+      ".algokit/generators",
+      ".algokit/generators/create_contract",
+      "smart_contracts",
+      "smart_contracts/hello_world",
+    ];
+  }
+
+  return ["contracts", "contracts/artifacts", "contracts/clients", ".vscode", "__test__"];
+}
 
 const PYTHON_PROJECT_FILES: FileMap = {
-  ".env.template": "ALGOD_SERVER=https://testnet-api.algonode.cloud\nALGOD_TOKEN=\nINDEXER_SERVER=https://testnet-idx.algonode.cloud\nINDEXER_TOKEN=\n",
-  "pyproject.toml": "[project]\nname = \"algokit-contracts\"\nversion = \"0.1.0\"\nrequires-python = \">=3.12\"\n\n[tool.black]\nline-length = 100\n",
-  "requirements.txt": "algopy>=0.8.0\nalgokit-utils>=3.0.0\n",
-  "smart_contracts/__main__.py": "from smart_contracts.hello_world.contract import Counter\n\nif __name__ == \"__main__\":\n    print(\"Build artifacts for\", Counter.__name__)\n",
+  ".algokit.toml": "[project]\nname = \"hello_world\"\ntype = \"smart-contract\"\n",
+  ".editorconfig": "root = true\n[*]\ncharset = utf-8\nend_of_line = lf\ninsert_final_newline = true\n",
+  ".gitattributes": "* text=auto\n",
+  ".gitignore": "__pycache__/\n.pytest_cache/\n.env*\nartifacts/\n",
+  "README.md": "# Algorand Smart Contract\n\nGenerated via algokit init (smart-contract template).\n",
+  "poetry.toml": "[virtualenvs]\nin-project = true\n",
+  "pyproject.toml": "[tool.poetry]\nname = \"hello-world\"\nversion = \"0.1.0\"\ndescription = \"Algorand smart contract\"\n\n[tool.poetry.dependencies]\npython = \"^3.12\"\nalgopy = \"^0.8.0\"\n",
+  ".algokit/.copier-answers.yml": "contract_name: hello_world\ndeployment_language: python\n",
+  ".algokit/generators/create_contract/copier.yaml": "_subdirectory: smart_contracts/{contract_name}\n",
   "smart_contracts/hello_world/contract.py": "from algopy import ARC4Contract\n\nclass Counter(ARC4Contract):\n    count: int = 0\n\n    def increment(self) -> int:\n        self.count += 1\n        return self.count\n",
   "smart_contracts/hello_world/deploy_config.py": "from dataclasses import dataclass\n\n@dataclass\nclass DeployConfig:\n    app_name: str = \"Counter\"\n    updatable: bool = True\n    deletable: bool = True\n",
-  "artifacts/README.md": "Generated contract artifacts appear here after build/deploy.\n",
+  "smart_contracts/__init__.py": "",
+  "smart_contracts/__main__.py": "from smart_contracts.hello_world.contract import Counter\n\nif __name__ == \"__main__\":\n    print(\"Loaded\", Counter.__name__)\n",
+  "tests/hello_world_test.py": "def test_placeholder():\n    assert True\n",
+  "artifacts/.gitkeep": "",
 };
 
 const TYPESCRIPT_PROJECT_FILES: FileMap = {
-  ".env.template": "ALGOD_SERVER=https://testnet-api.algonode.cloud\nALGOD_TOKEN=\nINDEXER_SERVER=https://testnet-idx.algonode.cloud\nINDEXER_TOKEN=\n",
-  "package.json": "{\n  \"name\": \"algokit-contracts\",\n  \"private\": true,\n  \"scripts\": {\n    \"build\": \"algokit compile\",\n    \"deploy\": \"algokit deploy\"\n  }\n}\n",
-  "tsconfig.json": "{\n  \"compilerOptions\": {\n    \"target\": \"ES2022\",\n    \"module\": \"ESNext\",\n    \"strict\": true\n  }\n}\n",
-  "smart_contracts/index.ts": "export * from './hello_world/contract.algo'\n",
-  "smart_contracts/hello_world/contract.algo.ts": "import { Contract, GlobalStateKey, uint64 } from '@algorandfoundation/algorand-typescript'\n\nexport class Counter extends Contract {\n  count = GlobalStateKey<uint64>()\n\n  increment(): uint64 {\n    this.count.value += 1\n    return this.count.value\n  }\n}\n",
-  "smart_contracts/hello_world/deploy_config.ts": "export const deployConfig = {\n  appName: 'Counter',\n  updatable: true,\n  deletable: true,\n}\n",
-  "artifacts/README.md": "Generated contract artifacts appear here after build/deploy.\n",
+  ".algokit.toml": "[project]\nname = \"hello_world\"\ntype = \"smart-contract\"\n",
+  ".eslintrc.js": "module.exports = { extends: ['standard-with-typescript'] }\n",
+  ".gitignore": "node_modules/\ndist/\n.env*\n",
+  ".prettierrc.toml": "printWidth = 100\n",
+  "README.md": "# TealScript Smart Contract\n\nGenerated via tealscript-algokit-template.\n",
+  "jest.config.js": "module.exports = { preset: 'ts-jest', testEnvironment: 'node' }\n",
+  "package.json": "{\n  \"name\": \"hello-world-contract\",\n  \"private\": true,\n  \"scripts\": {\n    \"build\": \"tsc -p tsconfig.json\",\n    \"test\": \"jest\",\n    \"deploy\": \"algokit deploy\"\n  }\n}\n",
+  "tsconfig.json": "{\n  \"compilerOptions\": {\n    \"target\": \"ES2022\",\n    \"module\": \"NodeNext\",\n    \"strict\": true\n  }\n}\n",
+  ".vscode/extensions.json": "{\n  \"recommendations\": [\"esbenp.prettier-vscode\"]\n}\n",
+  ".vscode/settings.json": "{\n  \"editor.formatOnSave\": true\n}\n",
+  "contracts/hello_world.algo.ts": "import { Contract, GlobalStateKey, uint64 } from '@algorandfoundation/algorand-typescript'\n\nexport class Counter extends Contract {\n  count = GlobalStateKey<uint64>()\n\n  increment(): uint64 {\n    this.count.value += 1\n    return this.count.value\n  }\n}\n",
+  "contracts/artifacts/components/.gitkeep": "",
+  "contracts/clients/.gitkeep": "",
+  "__test__/hello_world.test.ts": "describe('hello_world', () => {\n  it('works', () => {\n    expect(true).toBe(true)\n  })\n})\n",
 };
 
 function buildTree(paths: string[]): TreeNode[] {
@@ -118,11 +158,7 @@ export default function Home() {
   const [openFilePath, setOpenFilePath] = useState<string>("");
   const [walletAddress, setWalletAddress] = useState<string | null>(null);
   const [isDeploying, setIsDeploying] = useState(false);
-  const [expandedFolders, setExpandedFolders] = useState<string[]>([
-    "smart_contracts",
-    "smart_contracts/hello_world",
-    "artifacts",
-  ]);
+  const [expandedFolders, setExpandedFolders] = useState<string[]>([]);
   const [terminalLogs, setTerminalLogs] = useState<string[]>([
     "AlgoIDE v1.0.0 initialized.",
     "Awaiting commands...",
@@ -149,6 +185,18 @@ export default function Home() {
     setTheme(initialTheme);
     document.documentElement.setAttribute("data-theme", initialTheme);
   }, []);
+
+  useEffect(() => {
+    if (typeof window === "undefined" || !stack) return;
+
+    const keys = STORAGE_KEYS[stack];
+    const timeout = window.setTimeout(() => {
+      window.localStorage.setItem(keys.files, JSON.stringify(fileContents));
+      window.localStorage.setItem(keys.openFile, openFilePath);
+    }, 250);
+
+    return () => window.clearTimeout(timeout);
+  }, [stack, fileContents, openFilePath]);
 
   const tree = useMemo(() => buildTree(Object.keys(fileContents)), [fileContents]);
 
@@ -193,18 +241,55 @@ export default function Home() {
 
   const chooseStack = useCallback(
     (nextStack: Stack) => {
-      const initialFiles =
+      const defaultFiles =
         nextStack === "python" ? PYTHON_PROJECT_FILES : TYPESCRIPT_PROJECT_FILES;
       const defaultFile =
         nextStack === "python" ? PYTHON_CONTRACT_PATH : TYPESCRIPT_CONTRACT_PATH;
+      const defaultExpanded = getDefaultExpandedFolders(nextStack);
+
+      let restoredFiles: FileMap | null = null;
+      let restoredOpenFile: string | null = null;
+
+      if (typeof window !== "undefined") {
+        const keys = STORAGE_KEYS[nextStack];
+        const savedFiles = window.localStorage.getItem(keys.files);
+        const savedOpenFile = window.localStorage.getItem(keys.openFile);
+
+        if (savedFiles) {
+          try {
+            const parsed = JSON.parse(savedFiles) as unknown;
+            if (parsed && typeof parsed === "object") {
+              restoredFiles = parsed as FileMap;
+            }
+          } catch {
+            restoredFiles = null;
+          }
+        }
+
+        if (savedOpenFile && savedOpenFile.length > 0) {
+          restoredOpenFile = savedOpenFile;
+        }
+      }
+
+      const hydratedFiles = restoredFiles
+        ? { ...defaultFiles, ...restoredFiles }
+        : defaultFiles;
+      const hydratedOpenFile =
+        restoredOpenFile && hydratedFiles[restoredOpenFile]
+          ? restoredOpenFile
+          : defaultFile;
 
       setStack(nextStack);
-      setFileContents(initialFiles);
-      setOpenFilePath(defaultFile);
-      setExpandedFolders(["smart_contracts", "smart_contracts/hello_world", "artifacts"]);
-      addLog(
-        `PROJECT: ${nextStack === "python" ? "Python" : "TypeScript"} contract template loaded.`,
-      );
+      setFileContents(hydratedFiles);
+      setOpenFilePath(hydratedOpenFile);
+      setExpandedFolders(defaultExpanded);
+      if (restoredFiles) {
+        addLog(`CACHE: Restored autosaved ${nextStack} project files.`);
+      } else {
+        addLog(
+          `PROJECT: ${nextStack === "python" ? "Python" : "TypeScript"} smart-contract template loaded.`,
+        );
+      }
     },
     [addLog],
   );
