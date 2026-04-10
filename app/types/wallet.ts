@@ -13,6 +13,7 @@ export interface DeployPayload {
 export interface DeployResult {
   deploymentId: string;
   appId?: number;
+  contractAddress?: string;
   network: "testnet" | "mainnet";
   explorer: string;
   status: "success" | "error" | "sign";

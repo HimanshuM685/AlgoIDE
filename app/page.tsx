@@ -269,6 +269,9 @@ export default function Home() {
         const confirmedData = (await confirmResponse.json()) as DeployResult;
         if (confirmedData.appId) {
           addLog(`SUCCESS: Contract deployed! App ID: ${confirmedData.appId}`);
+          if (confirmedData.contractAddress) {
+            addLog(`ADDRESS: ${confirmedData.contractAddress}`);
+          }
         } else if (confirmedData.txId) {
           addLog(`SUCCESS: Transaction confirmed. TX ID: ${confirmedData.txId}`);
         } else {
