@@ -4,6 +4,23 @@
   --background: #ffffff;
   --foreground: #000000;
   --accent: #16CAC6;
+  --line: #000000;
+  --surface: #ffffff;
+  --surface-muted: #e5e5e5;
+  --muted-text: #4b5563;
+  --console-bg: #000000;
+  --console-text: #16cac6;
+}
+
+:root[data-theme="dark"] {
+  --background: #0b1113;
+  --foreground: #eef4f5;
+  --line: #e7eff1;
+  --surface: #11191c;
+  --surface-muted: #1a262b;
+  --muted-text: #9fb2b9;
+  --console-bg: #05090b;
+  --console-text: #36d1cc;
 }
 
 @theme inline {
@@ -25,34 +42,34 @@ body {
 
 /* Neobrutalist Utilities */
 .brutal-border {
-  border: 3px solid #000000;
+  border: 3px solid var(--line);
 }
 
 .brutal-border-r {
-  border-right: 3px solid #000000;
+  border-right: 3px solid var(--line);
 }
 
 .brutal-border-b {
-  border-bottom: 3px solid #000000;
+  border-bottom: 3px solid var(--line);
 }
 
 .brutal-border-t {
-  border-top: 3px solid #000000;
+  border-top: 3px solid var(--line);
 }
 
 .brutal-border-l {
-  border-left: 3px solid #000000;
+  border-left: 3px solid var(--line);
 }
 
 .brutal-shadow {
-  box-shadow: 5px 5px 0px 0px #000000;
+  box-shadow: 5px 5px 0px 0px var(--line);
 }
 
 .brutal-button {
   background-color: var(--accent);
   color: #000000;
-  border: 3px solid #000000;
-  box-shadow: 4px 4px 0px 0px #000000;
+  border: 3px solid var(--line);
+  box-shadow: 4px 4px 0px 0px var(--line);
   font-family: var(--font-code), monospace;
   font-weight: 600;
   text-transform: uppercase;
@@ -63,7 +80,7 @@ body {
 
 .brutal-button:hover:not(:disabled) {
   transform: translate(2px, 2px);
-  box-shadow: 2px 2px 0px 0px #000000;
+  box-shadow: 2px 2px 0px 0px var(--line);
 }
 
 .brutal-button:active:not(:disabled) {
@@ -80,17 +97,48 @@ body {
 }
 
 .brutal-button-secondary {
-  background-color: #ffffff;
+  background-color: var(--surface);
 }
 
 .editor-textarea {
   font-family: var(--font-code), monospace;
   font-size: 14px;
   line-height: 1.5;
-  background-color: #ffffff;
-  color: #000000;
+  background-color: var(--surface);
+  color: var(--foreground);
   resize: none;
   outline: none;
   width: 100%;
   height: 100%;
+}
+
+:root[data-theme="dark"] .bg-white {
+  background-color: var(--surface) !important;
+}
+
+:root[data-theme="dark"] .text-black {
+  color: var(--foreground) !important;
+}
+
+:root[data-theme="dark"] .bg-\[\#e5e5e5\] {
+  background-color: var(--surface-muted) !important;
+}
+
+:root[data-theme="dark"] .text-gray-600,
+:root[data-theme="dark"] .text-gray-700,
+:root[data-theme="dark"] .text-gray-400,
+:root[data-theme="dark"] .text-gray-500 {
+  color: var(--muted-text) !important;
+}
+
+:root[data-theme="dark"] .border-black {
+  border-color: var(--line) !important;
+}
+
+:root[data-theme="dark"] .bg-black {
+  background-color: var(--console-bg) !important;
+}
+
+:root[data-theme="dark"] .text-\[\#16cac6\] {
+  color: var(--console-text) !important;
 }

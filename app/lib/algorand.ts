@@ -1,29 +1,27 @@
 import {
   Algodv2,
-  mnemonicToPrivateKey,
   generateAccount,
-  makeBasicAccountTransactions,
-  makeAssetTransferTxnWithSuggestedParams,
+  makeAssetTransferTxnWithSuggestedParamsFromObject,
   assignGroupID,
+  decodeUnsignedTransaction,
   encodeUnsignedTransaction,
   decodeSignedTransaction,
   Transaction,
   SuggestedParams,
-  V2Client,
 } from "algosdk";
 
 export const ALGOSDK = {
   Algodv2,
   generateAccount,
+  decodeUnsignedTransaction,
   encodeUnsignedTransaction,
   decodeSignedTransaction,
   assignGroupID,
-  makeAssetTransferTxnWithSuggestedParams,
+  makeAssetTransferTxnWithSuggestedParamsFromObject,
   Transaction,
-  assignGroupID,
 };
 
-export function getAlgodClient(network: "testnet" | "mainnet"): V2Client {
+export function getAlgodClient(network: "testnet" | "mainnet"): Algodv2 {
   const baseServer =
     network === "testnet"
       ? "https://testnet-api.algonode.cloud"
@@ -39,23 +37,31 @@ export async function getSuggestedParams(
   const client = getAlgodClient(network);
   const params = await client.getTransactionParams().do();
   return {
-    flatFee: false,
-    fee: 1000,
-    firstRound: params.firstRound,
-    lastRound: params.lastRound,
-    genID: params.genesisID,
-    genesisHash: params.genesishashb64,
+    flatFee: params.flatFee,
+    fee: params.fee,
+    minFee: params.minFee,
+    firstValid: params.firstValid,
+    lastValid: params.lastValid,
+    genesisID: params.genesisID,
+    genesisHash: params.genesisHash,
   };
 }
 
 export function decodeBase64Transaction(base64Txn: string): Transaction {
-  const decoded = Uint8Array.from(atob(base64Txn), (c) => c.charCodeAt(0));
-  return Transaction.from_bytes(decoded);
+  const decoded =
+    typeof atob === "function"
+      ? Uint8Array.from(atob(base64Txn), (c) => c.charCodeAt(0))
+      : Uint8Array.from(Buffer.from(base64Txn, "base64"));
+  return decodeUnsignedTransaction(decoded);
 }
 
 export function encodeTransactionToBase64(txn: Transaction): string {
-  const bytes = txn.to_bytes();
-  return btoa(String.fromCharCode(...bytes));
+  const bytes = encodeUnsignedTransaction(txn);
+  if (typeof btoa === "function") {
+    return btoa(String.fromCharCode(...bytes));
+  }
+  return Buffer.from(bytes).toString("base64");
 }
 
-export { Transaction, SuggestedParams, encodeUnsignedTransaction, decodeSignedTransaction };
+export { Transaction, encodeUnsignedTransaction, decodeSignedTransaction };
+export type { SuggestedParams };

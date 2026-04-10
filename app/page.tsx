@@ -8,6 +8,7 @@ import type { DeployResult } from "@/app/types/wallet";
 
 type Network = "testnet" | "mainnet";
 type Stack = "python" | "typescript";
+type Theme = "light" | "dark";
 type FileMap = Record<string, string>;
 
 type TreeNode = {
@@ -110,6 +111,7 @@ function bytesToBase64(value: Uint8Array): string {
 }
 
 export default function Home() {
+  const [theme, setTheme] = useState<Theme>("light");
   const [stack, setStack] = useState<Stack | null>(null);
   const [network, setNetwork] = useState<Network>("testnet");
   const [fileContents, setFileContents] = useState<FileMap>({});
@@ -131,6 +133,22 @@ export default function Home() {
   useEffect(() => {
     logsEndRef.current?.scrollIntoView({ behavior: "auto" });
   }, [terminalLogs]);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    const savedTheme = window.localStorage.getItem("algoide-theme");
+    const systemTheme = window.matchMedia("(prefers-color-scheme: dark)").matches
+      ? "dark"
+      : "light";
+    const initialTheme =
+      savedTheme === "dark" || savedTheme === "light"
+        ? (savedTheme as Theme)
+        : systemTheme;
+
+    setTheme(initialTheme);
+    document.documentElement.setAttribute("data-theme", initialTheme);
+  }, []);
 
   const tree = useMemo(() => buildTree(Object.keys(fileContents)), [fileContents]);
 
@@ -158,6 +176,20 @@ export default function Home() {
       return next.slice(-120);
     });
   }, []);
+
+  const toggleTheme = useCallback(() => {
+    setTheme((prev) => {
+      const next: Theme = prev === "light" ? "dark" : "light";
+      if (typeof window !== "undefined") {
+        window.localStorage.setItem("algoide-theme", next);
+      }
+      document.documentElement.setAttribute("data-theme", next);
+      if (stack) {
+        addLog(`THEME: ${next.toUpperCase()} mode enabled.`);
+      }
+      return next;
+    });
+  }, [addLog, stack]);
 
   const chooseStack = useCallback(
     (nextStack: Stack) => {
@@ -332,6 +364,15 @@ export default function Home() {
     return (
       <div className="flex min-h-screen items-center justify-center bg-white px-4">
         <div className="w-full max-w-2xl brutal-border brutal-shadow bg-white p-6">
+          <div className="mb-4 flex justify-end">
+            <button
+              type="button"
+              onClick={toggleTheme}
+              className="border-2 border-black px-3 py-1 text-xs font-bold uppercase hover:bg-[#e5e5e5]"
+            >
+              {theme === "dark" ? "Light Mode" : "Dark Mode"}
+            </button>
+          </div>
           <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#16CAC6]">AlgoIDE Setup</p>
           <h1 className="mt-2 text-2xl font-black">Choose your smart contract stack</h1>
           <p className="mt-2 text-sm">Select one first, then the IDE opens with the full contract project tree.</p>
@@ -364,6 +405,13 @@ export default function Home() {
           <h1 className="text-2xl font-black tracking-tighter" style={{ fontFamily: "var(--font-code)" }}>
             ALGO<span className="text-[#16CAC6]">IDE</span>
           </h1>
+          <button
+            type="button"
+            onClick={toggleTheme}
+            className="border-2 border-black px-2 py-1 text-xs font-bold uppercase hover:bg-[#e5e5e5]"
+          >
+            {theme === "dark" ? "Light" : "Dark"}
+          </button>
           <button
             type="button"
             onClick={() => setStack(null)}

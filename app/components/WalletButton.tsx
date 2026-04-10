@@ -40,7 +40,7 @@ export function WalletButton({ onAddressChange }: WalletButtonProps) {
     return () => {
       isMounted = false;
       if (peraWallet.connector) {
-         peraWallet.connector.off("disconnect", handleDisconnect);
+         peraWallet.connector.off("disconnect");
       }
     };
   }, [onAddressChange]);
