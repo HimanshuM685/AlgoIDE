@@ -14,9 +14,8 @@ const ibmPlexMono = IBM_Plex_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "AlgoIDE | Algorand Contract Studio",
-  description:
-    "Write and deploy Algorand smart contracts in the browser with one click.",
+  title: "AlgoIDE | Build on Algorand",
+  description: "A clean browser-based landing page for writing and deploying Algorand apps.",
 };
 
 export default function RootLayout({

@@ -40,6 +40,11 @@ body {
   overflow: auto;
 }
 
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
 /* Neobrutalist Utilities */
 .brutal-border {
   border: 3px solid var(--line);

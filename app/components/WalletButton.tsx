@@ -4,10 +4,10 @@ import { useEffect, useState, useCallback } from "react";
 import { peraWallet, connectWallet, disconnectWallet, onWalletDisconnect, formatAddress } from "@/app/lib/wallet";
 
 interface WalletButtonProps {
-  onAddressChange: (address: string | null) => void;
+  onAddressChange?: (address: string | null) => void;
 }
 
-export function WalletButton({ onAddressChange }: WalletButtonProps) {
+export function WalletButton({ onAddressChange = () => {} }: WalletButtonProps) {
   const [address, setAddress] = useState<string | null>(null);
   const [isConnecting, setIsConnecting] = useState(false);
 
