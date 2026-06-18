@@ -149,7 +149,7 @@ export default function Home() {
             </p>
 
             <div className="mt-6 flex flex-wrap gap-3">
-              <a href="#" className="brutal-button inline-flex items-center justify-center">
+              <a href="/ide" className="brutal-button inline-flex items-center justify-center">
                 Open App
               </a>
               <a href="#" className="inline-flex items-center justify-center brutal-border bg-white px-5 py-3 text-sm font-bold uppercase tracking-wide hover:bg-[var(--surface-muted)]">
